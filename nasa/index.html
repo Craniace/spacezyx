@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE IMAGES by NASA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="img\favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <h1>SPACE IMAGE</h1>
+        <form>
+            <label for="date">Enter a date (DD-MM-YYYY):</label>
+            <input type="date" id="date" name="date">
+            <button type="submit">SUBMIT</button>
+        </form>
+        <div id="image"></div>
+    </div>
+
+    <script>
+        // API endpoint URL
+        const endpointUrl = 'https://api.nasa.gov/planetary/apod';
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            // Get the date from the form
+            const date = form.elements.date.value;
+            // Fetch the data from the API
+            fetch(`${endpointUrl}?api_key=fjUwsW1pTJvTDmGp29Uh86SjkCWO3YDnEGj4Gw2y&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    const imageContainer = document.getElementById('image');
+                    if (data.media_type === 'image') {
+                        // Display the image
+                        const image = document.createElement('img');
+                        image.src = data.url;
+                        image.alt = data.title;
+                        imageContainer.innerHTML = ''; // Clear previous content
+                        imageContainer.appendChild(image);
+                    } else {
+                        // Display a message if the media type is not an image
+                        const message = document.createElement('p');
+                        message.textContent = 'The media for this date is not an image.';
+                        imageContainer.innerHTML = ''; // Clear previous content
+                        imageContainer.appendChild(message);
+                    }
+                    // Display the title and explanation
+                    const title = document.createElement('h2');
+                    title.textContent = data.title;
+                    imageContainer.appendChild(title);
+
+                    const explanation = document.createElement('p');
+                    explanation.textContent = data.explanation;
+                    imageContainer.appendChild(explanation);
+                })
+                .catch(error => console.log(error));
+        });
+    </script>
+</body>
+
+</html>
