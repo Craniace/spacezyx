@@ -1,4 +1,4 @@
-# NASA Project
+# Sapcezyx Project
 
 ## Overview
 This project contains a simple HTML file named `index.html` that serves as the main entry point for the NASA-themed application. The application utilizes modern JavaScript features for handling API calls and data storage.
