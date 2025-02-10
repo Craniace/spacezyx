@@ -19,16 +19,16 @@ To view the webpage, open the `index.html` file in a web browser.
 This project is licensed under the MIT License.
 
 ✅ Preloading Today's Image
-The page fetches today's NASA image automatically when loaded.
-This improves the user experience as they don’t see an empty page.
+- The page fetches today's NASA image automatically when loaded.
+- This improves the user experience as they don’t see an empty page.
 
 ✅ Caching API Responses
-Stores previously fetched images in localStorage.
-If a user reselects a date, it loads instantly without another API call.
+- Stores previously fetched images in localStorage.
+- If a user reselects a date, it loads instantly without another API call.
 
 ✅ Skeleton Loader Instead of Text
-Instead of "Loading image...", shows a grey box (smoother UI).
-Looks better than just text while waiting for the image to load.
+- Instead of "Loading image...", shows a grey box (smoother UI).
+- Looks better than just text while waiting for the image to load.
 
 ✅ Lazy Image Loading (loading="lazy")
 - Ensures the browser only loads images when they are visible.
