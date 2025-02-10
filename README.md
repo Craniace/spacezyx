@@ -31,18 +31,18 @@ Instead of "Loading image...", shows a grey box (smoother UI).
 Looks better than just text while waiting for the image to load.
 
 ✅ Lazy Image Loading (loading="lazy")
-Ensures the browser only loads images when they are visible.
-Reduces unnecessary data usage & speeds up page load.
+- Ensures the browser only loads images when they are visible.
+= Reduces unnecessary data usage & speeds up page load.
 
 ✅ Loading Optimization
-Shows "Loading image..." instead of a blank screen.
-Uses image.loading = 'lazy' to delay loading until needed.
+- Shows "Loading image..." instead of a blank screen.
+- Uses image.loading = 'lazy' to delay loading until needed.
 
 ✅ Faster Image Loading
-Uses data.hdurl || data.url
-hdurl → High-resolution image (slow but high quality).
-url → Lower-resolution image (loads faster).
-Enables lazy loading so images load only when visible.
+- Uses data.hdurl || data.url
+- **hdurl** → High-resolution image (slow but high quality).
+- **url** → Lower-resolution image (loads faster).
+- Enables lazy loading so images load only when visible.
 
 ✅ Handles API Response Properly
 Uses async/await instead of .then() for better performance.
