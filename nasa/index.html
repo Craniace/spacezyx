@@ -1,66 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPACE IMAGES by NASA</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="img\favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        /* Center content */
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        /* Placeholder for loading */
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: gray;
+        }
+        /* Skeleton loader */
+        .skeleton {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: #ccc;
+            margin: auto;
+            display: none;
+            border-radius: 10px;
+        }
+        /* Image styling */
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <h1>SPACE IMAGE</h1>
-        <form>
-            <label for="date">Enter a date (DD-MM-YYYY):</label>
+        <form id="image-form">
+            <label for="date">Enter a date (YYYY-MM-DD):</label>
             <input type="date" id="date" name="date">
             <button type="submit">SUBMIT</button>
         </form>
+        <p id="loading">Loading image...</p> <!-- Loading message -->
+        <div class="skeleton" id="skeleton-loader"></div> <!-- Skeleton loader -->
         <div id="image"></div>
     </div>
 
     <script>
-        // API endpoint URL
         const endpointUrl = 'https://api.nasa.gov/planetary/apod';
+        const apiKey = 'fjUwsW1pTJvTDmGp29Uh86SjkCWO3YDnEGj4Gw2y';
+        const form = document.querySelector('#image-form');
+        const imageContainer = document.getElementById('image');
+        const loadingMessage = document.getElementById('loading');
+        const skeletonLoader = document.getElementById('skeleton-loader');
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', e => {
+        // Function to fetch image
+        async function fetchImage(date) {
+            try {
+                // Check if image is already cached
+                const cachedImage = localStorage.getItem(date);
+                if (cachedImage) {
+                    displayImage(JSON.parse(cachedImage));
+                    return;
+                }
+
+                loadingMessage.style.display = 'block'; // Show loading message
+                skeletonLoader.style.display = 'block'; // Show skeleton loader
+
+                const response = await fetch(`${endpointUrl}?api_key=${apiKey}&date=${date}`);
+                const data = await response.json();
+
+                if (!data.url) throw new Error("Invalid data received");
+
+                // Cache response
+                localStorage.setItem(date, JSON.stringify(data));
+
+                displayImage(data);
+            } catch (error) {
+                console.error(error);
+                loadingMessage.textContent = 'Error fetching image. Try again later.';
+            }
+        }
+
+        // Function to display image
+        function displayImage(data) {
+            loadingMessage.style.display = 'none'; // Hide loading message
+            skeletonLoader.style.display = 'none'; // Hide skeleton loader
+
+            imageContainer.innerHTML = ''; // Clear previous content
+
+            if (data.media_type === 'image') {
+                const image = document.createElement('img');
+                image.src = data.hdurl || data.url; // Use high-res if available
+                image.alt = data.title;
+                image.loading = 'lazy'; // Lazy load image
+                image.style.display = 'block'; // Show image
+
+                imageContainer.appendChild(image);
+            } else {
+                imageContainer.innerHTML = '<p>The media for this date is not an image.</p>';
+            }
+
+            const title = document.createElement('h2');
+            title.textContent = data.title;
+            imageContainer.appendChild(title);
+
+            const explanation = document.createElement('p');
+            explanation.textContent = data.explanation;
+            imageContainer.appendChild(explanation);
+        }
+
+        // Fetch today's image when the page loads
+        const today = new Date().toISOString().split('T')[0];
+        fetchImage(today);
+
+        // Event listener for form submission
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
-            // Get the date from the form
             const date = form.elements.date.value;
-            // Fetch the data from the API
-            fetch(`${endpointUrl}?api_key=fjUwsW1pTJvTDmGp29Uh86SjkCWO3YDnEGj4Gw2y&date=${date}`)
-                .then(response => response.json())
-                .then(data => {
-                    const imageContainer = document.getElementById('image');
-                    if (data.media_type === 'image') {
-                        // Display the image
-                        const image = document.createElement('img');
-                        image.src = data.url;
-                        image.alt = data.title;
-                        imageContainer.innerHTML = ''; // Clear previous content
-                        imageContainer.appendChild(image);
-                    } else {
-                        // Display a message if the media type is not an image
-                        const message = document.createElement('p');
-                        message.textContent = 'The media for this date is not an image.';
-                        imageContainer.innerHTML = ''; // Clear previous content
-                        imageContainer.appendChild(message);
-                    }
-                    // Display the title and explanation
-                    const title = document.createElement('h2');
-                    title.textContent = data.title;
-                    imageContainer.appendChild(title);
-
-                    const explanation = document.createElement('p');
-                    explanation.textContent = data.explanation;
-                    imageContainer.appendChild(explanation);
-                })
-                .catch(error => console.log(error));
+            if (!date) {
+                alert("Please enter a valid date!");
+                return;
+            }
+            fetchImage(date);
         });
+
     </script>
 </body>
-
 </html>
